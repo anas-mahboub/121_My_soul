@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>a gift for you ♡</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+/* palette: black + soft pink + red, white text on colored things.
+   panels = see-through white, round corners. works on any phone, any size. */
+:root{--bg:#000;--soft:#ffe6eb;--red:#e60000;--red2:#ff0000;--panel:rgba(255,255,255,.12)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:#fff;font-family:'Poppins',sans-serif;overflow:hidden;touch-action:manipulation}
+#stars,#hearts{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none}
+#stars{z-index:0}#hearts{z-index:1}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw 3s infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.9}}
+.scene{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2;display:none}
+.scene.active{display:block}
+#letter.active,#memories.active{overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* ---------------- lock screen ---------------- */
+#lock .lock-wrap{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;padding:20px;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch}
+.lock-card{margin:auto;width:min(380px,92vw);background:var(--panel);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:38px 30px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.65)}
+.lock-heart{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:rgba(230,0,0,.14);
+  border:1px solid rgba(255,0,0,.45);display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:var(--red2);text-shadow:0 0 14px rgba(255,0,0,.7);animation:beat 1.4s infinite}
+.lock-title{font-family:'Great Vibes',cursive;font-size:36px;color:var(--soft);margin-bottom:8px}
+.lock-sub{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.6);margin-bottom:24px}
+#pass{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;
+  color:#fff;padding:13px 16px;font:400 16px 'Poppins',sans-serif;letter-spacing:2px;text-align:center;outline:none}
+#pass:focus{border-color:var(--red2);box-shadow:0 0 0 3px rgba(230,0,0,.2)}
+#pass::placeholder{color:rgba(255,255,255,.35)}
+#unlock{margin-top:16px;width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
+  padding:14px;font:600 13px 'Poppins',sans-serif;letter-spacing:3px;cursor:pointer;touch-action:manipulation;
+  box-shadow:0 8px 22px rgba(230,0,0,.35)}
+#unlock:hover{background:var(--red2)}
+.lock-err{height:20px;margin-top:10px;font-size:12px;color:#ff6b6b;opacity:0;transition:opacity .3s}
+.lock-hint{margin-top:6px;font-size:11px;color:rgba(255,230,235,.55)}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+/* ---------------- screen 1 : garden ---------------- */
+#home .title-wrap{position:absolute;top:9%;left:0;right:0;text-align:center;padding:0 10px}
+#home h1{font-family:'Great Vibes',cursive;font-size:clamp(42px,11vw,76px);color:var(--soft);
+  text-shadow:0 0 8px rgba(255,120,150,.7),0 0 24px rgba(255,77,141,.5),0 0 46px rgba(255,0,60,.35);transform:rotate(-1.5deg)}
+#home .sub{margin-top:10px;font-size:clamp(9px,2.6vw,11px);letter-spacing:clamp(3px,1.4vw,6px);color:rgba(255,255,255,.75)}
+#garden{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(94vw,430px)}
+.pill-btn{display:inline-block;background:var(--red);border:none;color:#fff;
+  font:600 12px 'Poppins',sans-serif;letter-spacing:3px;padding:14px 32px;border-radius:999px;
+  cursor:pointer;touch-action:manipulation;box-shadow:0 8px 22px rgba(230,0,0,.35)}
+.pill-btn:hover{background:var(--red2)}
+#open-letter{position:absolute;bottom:calc(7% + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:3}
+.reveal{opacity:0;pointer-events:none;transition:opacity 1s}
+.reveal.show{opacity:1;pointer-events:auto}
+#garden .stem,#garden .blade,#garden .bush{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);animation:growY 1s ease-out forwards}
+#garden .leaf{transform-box:fill-box;transform:scale(0);animation:growXY .7s ease-out forwards}
+#garden .leaf.ll{transform-origin:100% 100%}#garden .leaf.rl{transform-origin:0% 100%}
+#garden .head{transform-box:fill-box;transform-origin:50% 75%;transform:scale(0);animation:bloom .9s cubic-bezier(.4,1.7,.5,1) forwards}
+#garden .sp{opacity:0;animation:tw 2.2s infinite}
+@keyframes growY{to{transform:scaleY(1)}}
+@keyframes growXY{to{transform:scale(1)}}
+@keyframes bloom{to{transform:scale(1)}}
+/* ---------------- screen 2 : letter ---------------- */
+#letter .wrap{min-height:100%;display:flex;align-items:center;padding:70px 20px 40px}
+.paper{position:relative;width:min(640px,94vw);margin:auto;background:var(--panel);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:26px 26px 26px 58px;
+  background-image:repeating-linear-gradient(transparent 0 33px,rgba(255,255,255,.1) 33px 34px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.paper::before{content:'';position:absolute;left:36px;top:0;bottom:0;width:2px;background:rgba(255,0,0,.55)}
+.paper p{font-size:15px;font-weight:300;line-height:34px;color:#fff;margin-bottom:34px;white-space:pre-wrap}
+.caret{display:inline-block;width:2px;height:16px;background:var(--red2);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#next-mem{display:block;margin:6px auto 0}
+/* ---------------- screen 3 : photos ---------------- */
+#memories .inner{padding:70px 20px 60px;padding-bottom:calc(60px + env(safe-area-inset-bottom));text-align:center}
+#memories h2{color:var(--soft);font-size:14px;letter-spacing:6px;font-weight:600;margin-bottom:30px}
+.mem{position:relative;width:min(370px,86vw);margin:0 auto 44px;background:var(--panel);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:10px 10px 4px;
+  box-shadow:0 14px 38px rgba(0,0,0,.55);transform:rotate(var(--rot,0deg))}
+.mem::before{content:'';position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  width:92px;height:26px;background:rgba(255,255,255,.3);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.mem img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:12px;display:block}
+.mem figcaption{font-size:13px;font-style:italic;color:var(--soft);padding:12px 6px 10px;text-align:left}
+.from-me{margin:4px 0 26px;font-size:11px;letter-spacing:4px;color:rgba(255,255,255,.7)}
+/* ---------------- screen 4 : ending ---------------- */
+#final .stage{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
+.bar{position:absolute;top:50%;left:50%;width:6px;border-radius:3px;background:#fff;
+  box-shadow:0 0 14px #fff;height:clamp(120px,28vh,210px);transition:transform 1.1s ease-in-out}
+.layer{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;align-items:center;gap:2.5vw;white-space:nowrap;
+  font-weight:800;font-size:clamp(26px,8.4vw,64px);letter-spacing:1px;
+  color:#ff1a1a;text-shadow:0 0 18px rgba(255,0,0,.7);opacity:0;transition:opacity .6s}
+.layer .heart{color:var(--red2);text-shadow:0 0 26px rgba(255,0,0,.85);animation:beat 1.1s infinite}
+.l-ihy .heart{font-size:1.25em}
+@keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}}
+/* fallback first (old phones), fancy min() second (new phones) */
+#final[data-phase=p1] .bl,#final[data-phase=p4] .bl{transform:translate(-34vw,-50%);transform:translate(calc(min(34vw,260px)*-1),-50%)}
+#final[data-phase=p1] .br,#final[data-phase=p4] .br{transform:translate(34vw,-50%);transform:translate(min(34vw,260px),-50%)}
+#final[data-phase=p2] .bl{transform:translate(-21vw,-50%);transform:translate(calc(min(21vw,170px)*-1),-50%)}
+#final[data-phase=p2] .br{transform:translate(21vw,-50%);transform:translate(min(21vw,170px),-50%)}
+#final[data-phase=p3] .bl{transform:translate(-43vw,-50%);transform:translate(calc(min(43vw,340px)*-1),-50%)}
+#final[data-phase=p3] .br{transform:translate(43vw,-50%);transform:translate(min(43vw,340px),-50%)}
+#final[data-phase=p1] .l-heart,#final[data-phase=p3] .l-heart{opacity:1}
+#final[data-phase=p2] .l-ihy{opacity:1}
+#final[data-phase=p4] .l-ily{opacity:1}
+.ring{position:absolute;left:50%;top:50%;width:130px;height:130px;margin:-65px 0 0 -65px;
+  border:3px solid rgba(255,0,0,.65);border-radius:50%;opacity:0}
+#final[data-phase=p4] .ring{animation:ringAnim 1.6s ease-out .1s}
+@keyframes ringAnim{0%{transform:scale(.15);opacity:0}25%{opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--red2);opacity:0}
+.d1{left:57%;top:37%}.d2{left:42%;top:62%}
+#final[data-phase=p4] .dot{animation:dotFloat 2.6s ease-out .2s}
+@keyframes dotFloat{0%{opacity:0;transform:translateY(0)}20%{opacity:.85}100%{opacity:0;transform:translateY(-34px)}}
+/* floating hearts */
+.fh{position:fixed;top:-4vh;z-index:1;animation:fall linear forwards;filter:blur(.4px)}
+@keyframes fall{to{transform:translate(var(--dx),115vh) rotate(var(--rt));opacity:0}}
+/* tiny phones */
+@media (max-width:360px){
+  .paper{padding:20px 16px 20px 44px}
+  .paper::before{left:26px}
+  .paper p{font-size:13.5px}
+  .lock-card{padding:30px 20px}
+}
+/* short / landscape phones */
+@media (max-height:520px){
+  #home .title-wrap{top:4%}
+  #garden{width:min(94vw,430px,52vh)}
+  #letter .wrap{padding-top:40px}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div><div id="hearts"></div>
+
+<!-- lock screen. change PASSWORD in the script below -->
+<section class="scene active" id="lock">
+  <div class="lock-wrap">
+    <div class="lock-card" id="lock-card">
+      <div class="lock-heart">♥</div>
+      <div class="lock-title">Special Gift</div>
+      <div class="lock-sub">THIS GIFT IS LOCKED · ENTER THE SECRET WORD</div>
+      <input id="pass" type="password" placeholder="••••••••" autocomplete="off">
+      <button id="unlock">UNLOCK ♥</button>
+      <div class="lock-err" id="lock-err"></div>
+      <div class="lock-hint" id="lock-hint"></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="home">
+  <div class="title-wrap">
+    <h1>Special Gift</h1>
+    <div class="sub">TO SOMEONE SPECIAL IN MY LIFE ✨</div>
+  </div>
+
+  <svg id="garden" viewBox="0 0 420 520">
+    <g fill="none" stroke-linecap="round">
+      <path class="blade" style="animation-delay:.15s" d="M60 520Q40 430 70 370" stroke="#166b35" stroke-width="7"/>
+      <path class="blade" style="animation-delay:.3s"  d="M90 520Q80 440 60 400" stroke="#1f8f4d" stroke-width="6"/>
+      <path class="blade" style="animation-delay:.25s" d="M330 520Q350 430 320 370" stroke="#166b35" stroke-width="7"/>
+      <path class="blade" style="animation-delay:.4s"  d="M300 520Q310 440 335 400" stroke="#1f8f4d" stroke-width="6"/>
+      <path class="blade" style="animation-delay:.5s"  d="M30 520Q20 460 40 420" stroke="#2e9e4f" stroke-width="5"/>
+      <path class="blade" style="animation-delay:.55s" d="M390 520Q400 460 380 420" stroke="#2e9e4f" stroke-width="5"/>
+    </g>
+    <g>
+      <ellipse class="bush" style="animation-delay:.1s"  cx="140" cy="505" rx="60" ry="26" fill="#14532d"/>
+      <ellipse class="bush" style="animation-delay:.15s" cx="280" cy="505" rx="60" ry="26" fill="#14532d"/>
+      <ellipse class="bush" style="animation-delay:.2s"  cx="210" cy="512" rx="70" ry="28" fill="#166b35"/>
+      <ellipse class="bush" style="animation-delay:.3s"  cx="170" cy="492" rx="45" ry="22" fill="#1f8f4d"/>
+      <ellipse class="bush" style="animation-delay:.35s" cx="250" cy="492" rx="45" ry="22" fill="#1f8f4d"/>
+    </g>
+    <path class="stem" style="animation-delay:.6s" d="M135 515C133 465 128 425 124 380" stroke="#7a4a2b" stroke-width="6" fill="none"/>
+    <path class="leaf ll" style="animation-delay:1.3s" d="M132 450Q92 442 80 410Q120 418 132 440Z" fill="#1f8f4d"/>
+    <path class="leaf rl" style="animation-delay:1.5s" d="M129 420Q165 412 176 384Q140 392 129 410Z" fill="#2e7d4f"/>
+    <g transform="translate(122,380) scale(.8)">
+      <g class="head" style="animation-delay:1.9s">
+        <g fill="#ffc44d">
+          <g transform="rotate(-64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+          <g transform="rotate(-32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <ellipse cy="-30" rx="14" ry="29"/>
+          <g transform="rotate(32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <g transform="rotate(64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+        </g>
+        <ellipse cy="0" rx="17" ry="8" fill="#fff"/>
+      </g>
+    </g>
+    <path class="stem" style="animation-delay:.3s" d="M210 515C210 450 210 380 210 300" stroke="#7a4a2b" stroke-width="7" fill="none"/>
+    <path class="leaf ll" style="animation-delay:1s"   d="M210 440Q165 430 150 392Q195 400 210 428Z" fill="#1f8f4d"/>
+    <path class="leaf rl" style="animation-delay:1.2s" d="M210 405Q255 395 270 357Q225 365 210 393Z" fill="#2e7d4f"/>
+    <path class="leaf ll" style="animation-delay:1.4s" d="M210 360Q170 352 158 320Q198 328 210 350Z" fill="#2e7d4f"/>
+    <g transform="translate(210,300)">
+      <g class="head" style="animation-delay:1.6s">
+        <g fill="#ff5f9e">
+          <g transform="rotate(-64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+          <g transform="rotate(-32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <ellipse cy="-30" rx="14" ry="29"/>
+          <g transform="rotate(32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <g transform="rotate(64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+        </g>
+        <ellipse cy="0" rx="17" ry="8" fill="#fff"/>
+      </g>
+    </g>
+    <path class="stem" style="animation-delay:.5s" d="M285 515C287 460 292 410 296 350" stroke="#7a4a2b" stroke-width="6" fill="none"/>
+    <path class="leaf rl" style="animation-delay:1.35s" d="M290 445Q330 437 342 405Q302 413 290 435Z" fill="#1f8f4d"/>
+    <path class="leaf ll" style="animation-delay:1.55s" d="M292 415Q256 407 245 379Q281 387 292 405Z" fill="#2e7d4f"/>
+    <g transform="translate(298,350) scale(.9)">
+      <g class="head" style="animation-delay:2.1s">
+        <g fill="#ff5f9e">
+          <g transform="rotate(-64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+          <g transform="rotate(-32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <ellipse cy="-30" rx="14" ry="29"/>
+          <g transform="rotate(32)"><ellipse cy="-28" rx="14" ry="29"/></g>
+          <g transform="rotate(64)"><ellipse cy="-26" rx="14" ry="28"/></g>
+        </g>
+        <ellipse cy="0" rx="17" ry="8" fill="#fff"/>
+      </g>
+    </g>
+    <circle class="sp" style="animation-delay:.4s"  cx="210" cy="240" r="2.5" fill="#ffe6eb"/>
+    <circle class="sp" style="animation-delay:1.2s" cx="300" cy="300" r="2"   fill="#fff"/>
+    <circle class="sp" style="animation-delay:1.8s" cx="120" cy="330" r="2"   fill="#ffe6eb"/>
+    <circle class="sp" style="animation-delay:2.4s" cx="255" cy="265" r="2"   fill="#ffe6eb"/>
+  </svg>
+
+  <button id="open-letter" class="pill-btn reveal">OPEN LETTER →</button>
+</section>
+
+<section class="scene" id="letter">
+  <div class="wrap">
+    <div>
+      <div class="paper" id="letter-body"></div>
+      <button id="next-mem" class="pill-btn reveal">NEXT →</button>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="memories">
+  <div class="inner">
+    <h2>📷 &nbsp;OUR MEMORIES</h2>
+    <figure class="mem" style="--rot:-2.2deg"><img id="mem1" alt=""><figcaption>Have a wonderful day!</figcaption></figure>
+    <figure class="mem" style="--rot:1.6deg"><img id="mem2" alt=""><figcaption>You're always amazing</figcaption></figure>
+    <figure class="mem" style="--rot:-1.2deg"><img id="mem3" alt=""><figcaption>You make every day brighter ☀</figcaption></figure>
+    <div class="from-me">FROM ME ♡</div>
+    <button id="next-final" class="pill-btn">NEXT →</button>
+  </div>
+</section>
+
+<section class="scene" id="final" data-phase="p1">
+  <div class="stage">
+    <span class="bar bl"></span>
+    <span class="bar br"></span>
+    <div class="layer l-heart"><span class="heart">♥</span></div>
+    <div class="layer l-ihy"><span>I</span><span class="heart">♥</span><span>YOU</span></div>
+    <div class="layer l-ily"><span>I&nbsp;LOVE&nbsp;YOU</span></div>
+    <span class="ring"></span>
+    <span class="dot d1"></span>
+    <span class="dot d2"></span>
+  </div>
+</section>
+
+<script>
+// hey, if you're reading this code... hi, it's me. sorry it's messy, i'm not a programmer lol
+const $=s=>document.querySelector(s);
+let current='lock';
+
+/* ============ THE SECRET WORD — change it to anything you both know ============ */
+const PASSWORD='iloveyou';
+const HINT='hint: the three words I always tell you ♡';
+$('#lock-hint').textContent=HINT;
+function tryUnlock(){
+  const v=$('#pass').value.trim().toLowerCase();
+  if(v===PASSWORD.toLowerCase()){
+    $('#lock').classList.remove('active');
+    show('home');
+    setTimeout(()=>$('#open-letter').classList.add('show'),2600);
+  }else{
+    const c=$('#lock-card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+    const e=$('#lock-err');e.textContent="that's not it, my love ♡ try again";e.style.opacity=1;
+    setTimeout(()=>e.style.opacity=0,1800);
+    $('#pass').value='';$('#pass').focus();
+  }
+}
+$('#unlock').addEventListener('click',tryUnlock);
+$('#pass').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
+
+// stars
+for(let i=0;i<110;i++){
+  const s=document.createElement('i');s.className='star';
+  const z=Math.random()*2+1;
+  s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;animation-delay:${Math.random()*3}s`;
+  $('#stars').appendChild(s);
+}
+
+// floating red hearts
+const HCOL=['#ff0000','#e60000','#ff3333','#b30000'];
+setInterval(()=>{
+  if(current==='lock'||current==='home')return;
+  const h=document.createElement('i');h.className='fh';h.textContent='♥';
+  const sz=8+Math.random()*14;
+  h.style.cssText=`left:${Math.random()*100}vw;font-size:${sz}px;color:${HCOL[Math.random()*HCOL.length|0]};--dx:${(Math.random()*2-1)*14}vw;--rt:${(Math.random()*2-1)*180}deg;animation-duration:${5+Math.random()*4}s;text-shadow:0 0 8px currentColor`;
+  h.addEventListener('animationend',()=>h.remove());
+  $('#hearts').appendChild(h);
+},260);
+
+function show(id){
+  current=id;
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+  $('#'+id).classList.add('active');
+  if(id==='letter'&&!started){started=true;startTyping();}
+  if(id==='final')finalPlay();
+}
+$('#open-letter').addEventListener('click',()=>show('letter'));
+$('#next-mem').addEventListener('click',()=>show('memories'));
+$('#next-final').addEventListener('click',()=>show('final'));
+
+// ending loop
+let fT=null;
+function finalPlay(){
+  clearTimeout(fT);
+  const f=$('#final');
+  const seq=['p1','p2','p3','p4'];
+  const dur=[1500,2000,1500,3200];
+  let i=0;
+  (function step(){
+    f.dataset.phase=seq[i];
+    fT=setTimeout(()=>{i=(i+1)%4;step();},dur[i]);
+  })();
+}
+
+// ---- the romantic letter ----
+const LETTER=[
+"From the moment you came into my life, every ordinary day became something I look forward to. Your smile is my favorite sight, your voice is my favorite sound, and your heart is my favorite place in this world.",
+"I don't need a perfect life, I just need you in mine. Through every storm and every sunny day, I will stand beside you, hold your hand, and love you a little more than yesterday, a little less than tomorrow.",
+"You are not only the one I love, you are my peace, my home and my best friend. Wherever you are is where I belong. I choose you, today, tomorrow and always. ♥"
+];
+let started=false;
+function startTyping(){
+  const box=$('#letter-body');box.innerHTML='';
+  const caret=document.createElement('span');caret.className='caret';
+  let pi=0,ci=0,cur=null;
+  (function tick(){
+    if(pi>=LETTER.length){caret.remove();$('#next-mem').classList.add('show');return;}
+    if(!cur){cur=document.createElement('p');box.appendChild(cur);cur.appendChild(caret);}
+    const t=LETTER[pi];
+    if(ci<t.length){cur.insertBefore(document.createTextNode(t[ci++]),caret);setTimeout(tick,14+Math.random()*14);}
+    else{pi++;ci=0;cur=null;setTimeout(tick,400);}
+  })();
+}
+
+// photos from the img folder: mem1 / mem2 / mem3
+const PH='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect width="300" height="400" fill="#181820"/><path d="M150 240c-30-28-60-48-60-84 0-24 20-40 40-40 12 0 20 6 20 14 0-8 8-14 20-14 20 0 40 16 40 40 0 36-30 56-60 84Z" fill="#e60000" opacity=".8"/><text x="150" y="300" fill="#8f93a3" font-size="14" text-anchor="middle" font-family="sans-serif">our memory</text></svg>`);
+function loadImg(id,name){
+  const list=[`img/${name}.png`,`img/${name}.jpg`,`img/${name}.jpeg`,`img/${name}.webp`,`img/${name}.gif`,`${name}.png`,`${name}.jpg`,`${name}.jpeg`,`${name}.webp`,`${name}.gif`];
+  let i=0;(function n(){ if(i>=list.length){$('#'+id).src=PH;return;}
+    const im=new Image();im.onload=()=>$('#'+id).src=list[i];im.onerror=()=>{i++;n();};im.src=list[i]; })();
+}
+loadImg('mem1','mem1');loadImg('mem2','mem2');loadImg('mem3','mem3');
+</script>
+</body>
+</html>
